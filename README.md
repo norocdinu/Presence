@@ -4,6 +4,22 @@ A low-profile keep-awake / keep-active tray utility for Windows. It stops the PC
 from sleeping and (optionally) keeps your session showing as "active," without
 the tell-tale fixed-interval fake keypresses that a basic jiggler produces.
 
+## Install (easy)
+
+Grab **`Presence-Setup.zip`** from the
+[latest release](https://github.com/norocdinu/Presence/releases/latest), then:
+
+1. Right-click the zip → **Extract All**.
+2. Open the extracted folder and double-click **`install.cmd`**.
+
+It installs to your user folder, adds Desktop + Start Menu shortcuts, and starts
+running (tray icon near the clock). No admin needed. Remove it anytime with
+`uninstall.cmd`.
+
+If Windows shows **"Windows protected your PC"**, click **More info → Run
+anyway** (the tool isn't signed by a paid certificate; it is not a virus). The
+installer clears that warning for `Presence.exe` itself.
+
 ## How it works
 
 | Goal | Mechanism | Detectable? |

@@ -1,0 +1,27 @@
+Presence - quick start
+======================
+
+1. Right-click Presence-Setup.zip -> Extract All  (extract to a folder).
+2. Open the extracted folder.
+3. Double-click  install.cmd
+
+That's it. Presence installs to your user folder, adds Desktop + Start Menu
+shortcuts, and starts running (tray icon near the clock).
+
+Right-click the tray icon for options:
+  - Keep system awake / Keep display on / Keep me active
+  - Auto-stop at a time of day (e.g. 6:00 PM)
+  - Launch at startup
+
+To remove it: double-click  uninstall.cmd
+
+--------------------------------------------------------------------------
+If Windows shows "Windows protected your PC" when you run install.cmd:
+  click  More info  ->  Run anyway.
+(This appears because the tool isn't code-signed by a paid certificate; the
+installer clears that warning for Presence.exe itself. It is not a virus.)
+
+If your antivirus quarantines Presence.exe specifically, it's a false positive
+(the "keep me active" feature simulates a tiny mouse move, which some AV flags
+as a jiggler). Either submit a false-positive report to your AV vendor, or ask
+for the "sleep-only" build which uses no simulated input at all.

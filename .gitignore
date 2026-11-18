@@ -1,5 +1,7 @@
 # Build output
 Presence.exe
+Presence-Setup.zip
+*.zip
 *.pdb
 bin/
 obj/
