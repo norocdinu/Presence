@@ -83,9 +83,52 @@ build.cmd
 
 This invokes the in-box `csc.exe` and produces `Presence.exe`.
 
+## Antivirus / SmartScreen
+
+A brand-new, unsigned exe that simulates input and auto-starts matches the
+generic heuristic profile for "mouse jiggler / PUP," so some AV engines and
+SmartScreen flag it. It is a **false positive**. Options, best first:
+
+1. **Report the false positive** to your AV vendor (free). For Microsoft
+   Defender: <https://www.microsoft.com/wdsi/filesubmission> — upload the exe,
+   mark it clean. Usually cleared within a day or two.
+2. **Build from source** (above) — a locally built exe you trust.
+3. **Self-sign + trust** on machines you own (below) — removes the
+   "unknown publisher" prompt there.
+4. **Code signing certificate** (paid Authenticode cert) — the only thing that
+   earns public reputation across machines you don't control.
+
+The binary already ships with version metadata and an `asInvoker` manifest,
+which lowers the heuristic score but does not fully clear a behavioral flag.
+
+## Code signing (self-signed)
+
+For machines **you own**, you can sign the exe and trust the signature:
+
+1. On the build machine, after building:
+   ```
+   powershell -ExecutionPolicy Bypass -File sign.ps1
+   ```
+   Creates a self-signed code-signing cert (first run), signs `Presence.exe`
+   with a trusted timestamp, and exports the public `PresenceCodeSign.cer`.
+2. On each machine that should trust it, in an **Administrator** PowerShell:
+   ```
+   powershell -ExecutionPolicy Bypass -File trust-cert.ps1
+   ```
+   Imports `PresenceCodeSign.cer` into the Trusted Root / Trusted Publishers
+   stores. After this, `Presence.exe` runs as a trusted publisher.
+
+Self-signing only helps where the certificate is trusted — it is **not** a
+substitute for a paid cert for public distribution. The private key lives in
+your Windows certificate store (`Cert:\CurrentUser\My`); never commit a `.pfx`.
+
 ## Files
 
 - `Presence.exe` — the compiled tray app
 - `Presence.cs` — source
+- `Presence.manifest` — app manifest (asInvoker, DPI aware)
 - `build.cmd` — rebuild script
+- `sign.ps1` — sign the exe with a self-signed cert (build machine)
+- `trust-cert.ps1` — trust the signature on a machine you own (run as admin)
+- `PresenceCodeSign.cer` — public signing certificate (safe to share)
 - `README.md` — this file

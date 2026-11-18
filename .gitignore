@@ -4,6 +4,9 @@ Presence.exe
 bin/
 obj/
 
+# Private signing key - NEVER commit. The public PresenceCodeSign.cer is fine.
+*.pfx
+
 # Local runtime config (per-machine)
 # (config lives in %APPDATA%\Presence, not here, but ignore any stray copies)
 config.ini
