@@ -1,0 +1,10 @@
+# Build output
+Presence.exe
+*.pdb
+bin/
+obj/
+
+# Local runtime config (per-machine)
+# (config lives in %APPDATA%\Presence, not here, but ignore any stray copies)
+config.ini
+requests.txt
