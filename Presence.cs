@@ -17,10 +17,21 @@ using System;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
+
+// Version / publisher metadata. A binary with real version info and a product
+// name looks like normal software to AV heuristics; a blank one scores higher.
+[assembly: AssemblyTitle("Presence")]
+[assembly: AssemblyDescription("Keep-awake / keep-active tray utility")]
+[assembly: AssemblyProduct("Presence")]
+[assembly: AssemblyCompany("Presence")]
+[assembly: AssemblyCopyright("Copyright (c) 2026")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
 
 namespace Presence
 {
