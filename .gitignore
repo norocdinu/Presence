@@ -5,6 +5,7 @@ Presence-Setup.zip
 *.pdb
 bin/
 obj/
+sleep-only/
 
 # Private signing key - NEVER commit. The public PresenceCodeSign.cer is fine.
 *.pfx

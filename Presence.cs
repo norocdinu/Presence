@@ -49,6 +49,10 @@ namespace Presence
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
 
+#if !SLEEP_ONLY
+        // --- Synthetic-input support (only compiled into the FULL edition). ---
+        // The SLEEP_ONLY build omits all of this, so the binary contains no
+        // SendInput import and nothing a jiggler heuristic can match.
         [StructLayout(LayoutKind.Sequential)]
         public struct LASTINPUTINFO
         {
@@ -106,6 +110,7 @@ namespace Presence
             inp[0].mi.dwExtraInfo = IntPtr.Zero;
             SendInput(1, inp, Marshal.SizeOf(typeof(INPUT)));
         }
+#endif
     }
 
     class Config
@@ -230,7 +235,9 @@ namespace Presence
             _timer.Tick += (s, e) => Tick();
             _timer.Start();
 
+#if !SLEEP_ONLY
             ScheduleNextNudge();
+#endif
             Tick();
         }
 
@@ -273,6 +280,7 @@ namespace Presence
                     Native.SetThreadExecutionState(Native.EXECUTION_STATE.ES_CONTINUOUS);
                 }
 
+#if !SLEEP_ONLY
                 if (_cfg.KeepActive && DateTime.Now >= _nextNudge)
                 {
                     if (Native.IdleSeconds() >= (uint)_cfg.IdleThreshold)
@@ -282,6 +290,7 @@ namespace Presence
                     }
                     // if the user is active we leave the timer and re-check next tick
                 }
+#endif
             }
             else
             {
@@ -292,15 +301,20 @@ namespace Presence
             UpdateUi();
         }
 
+#if !SLEEP_ONLY
         void ScheduleNextNudge()
         {
             int secs = _rng.Next(_cfg.MinInterval, _cfg.MaxInterval + 1);
             _nextNudge = DateTime.Now.AddSeconds(secs);
         }
+#endif
 
         // ---- UI ----
 
-        ToolStripMenuItem _miStatus, _miPause, _miAwake, _miDisplay, _miActive, _miStartup, _miStopHdr;
+        ToolStripMenuItem _miStatus, _miPause, _miAwake, _miDisplay, _miStartup, _miStopHdr;
+#if !SLEEP_ONLY
+        ToolStripMenuItem _miActive;
+#endif
 
         void BuildMenu()
         {
@@ -321,8 +335,10 @@ namespace Presence
             _miDisplay = new ToolStripMenuItem("Keep display on", null, (s, e) => { _cfg.KeepDisplayOn = !_cfg.KeepDisplayOn; _cfg.Save(); Tick(); });
             menu.Items.Add(_miDisplay);
 
+#if !SLEEP_ONLY
             _miActive = new ToolStripMenuItem("Keep me active (presence)", null, (s, e) => { _cfg.KeepActive = !_cfg.KeepActive; _cfg.Save(); Tick(); });
             menu.Items.Add(_miActive);
+#endif
 
             menu.Items.Add(new ToolStripSeparator());
 
@@ -365,19 +381,29 @@ namespace Presence
             _miPause.Text = _paused ? "Paused" : "Active";
             _miAwake.Checked = _cfg.KeepAwake;
             _miDisplay.Checked = _cfg.KeepDisplayOn;
+#if !SLEEP_ONLY
             _miActive.Checked = _cfg.KeepActive;
+#endif
             _miStartup.Checked = _cfg.StartAtLogin;
             _miStopHdr.Text = _cfg.StopEnabled ? ("Auto-stop: " + Pretty(_cfg.StopTime)) : "Auto-stop: off";
         }
 
         void UpdateUi()
         {
+#if SLEEP_ONLY
+            bool on = Working && _cfg.KeepAwake;
+#else
             bool on = Working && (_cfg.KeepAwake || _cfg.KeepActive);
+#endif
             _tray.Icon = on ? _iconActive : _iconIdle;
             string state;
             if (_paused) state = "Paused";
             else if (!InActiveWindow()) state = "Stopped (" + Pretty(_cfg.StopTime) + ")";
+#if SLEEP_ONLY
+            else state = "Keeping awake";
+#else
             else state = "Keeping " + (_cfg.KeepActive ? "active" : "awake");
+#endif
             _miStatus.Text = "Presence — " + state;
             _tray.Text = "Presence — " + state;
         }

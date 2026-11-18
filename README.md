@@ -20,6 +20,16 @@ If Windows shows **"Windows protected your PC"**, click **More info → Run
 anyway** (the tool isn't signed by a paid certificate; it is not a virus). The
 installer clears that warning for `Presence.exe` itself.
 
+## Two editions
+
+| Edition | Download | Behaviour |
+|---------|----------|-----------|
+| **Full** | `Presence-Setup.zip` | Prevents sleep **and** keeps you "active" (Teams/Slack green) via a tiny idle-only invisible mouse move. |
+| **Sleep-only** | `Presence-SleepOnly-Setup.zip` | Prevents sleep **only**. Contains **no synthetic-input code at all** (`SendInput` is compiled out), so nothing a jiggler/PUP antivirus rule can match. Won't keep you green. |
+
+Pick **sleep-only** if antivirus flagged the full build. Build it yourself with
+`build-sleep-only.cmd` (defines `SLEEP_ONLY`); the full build uses `build.cmd`.
+
 ## How it works
 
 | Goal | Mechanism | Detectable? |
